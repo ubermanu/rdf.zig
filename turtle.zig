@@ -1,8 +1,9 @@
 const std = @import("std");
-const Triple = @import("Triple.zig");
+const rdf = @import("rdf.zig");
 
 const Allocator = std.mem.Allocator;
 const ArenaAllocator = std.heap.ArenaAllocator;
+const Triple = rdf.Triple;
 
 const ParseError = error{
     UnexpectedCharacter,
@@ -35,6 +36,8 @@ const Tokenizer = struct {
         };
     }
 
+    /// Return tokens from the input text.
+    /// Caller owns the returned memory.
     pub fn tokenize(self: *Tokenizer, buffer: []const u8) ![]Token {
         self.buffer = buffer;
         self.pos = 0;
@@ -111,11 +114,10 @@ test "tokenizer" {
         \\    foaf:age "30"^^xsd:integer .
     ;
 
-    const allocator = std.testing.allocator;
-    var t = Tokenizer.init(allocator);
+    var t = Tokenizer.init(std.testing.allocator);
 
     const tokens = try t.tokenize(str);
-    defer allocator.free(tokens);
+    defer std.testing.allocator.free(tokens);
 
     try std.testing.expectEqual(14, tokens.len);
 }
@@ -135,7 +137,7 @@ const Parser = struct {
             .pos = 0,
             .prefixes = std.StringHashMap([]const u8).init(allocator),
             .triples = std.ArrayList(Triple).init(allocator),
-            .tokens = &.{},
+            .tokens = undefined,
         };
     }
 
@@ -235,7 +237,7 @@ const Parser = struct {
         var acc = std.ArrayList(u8).init(self.allocator);
         defer acc.deinit();
 
-        var it = std.mem.split(u8, str, "^^");
+        var it = std.mem.splitSequence(u8, str, "^^");
 
         var i: usize = 0;
 
