@@ -1,8 +1,8 @@
 const std = @import("std");
-const Triple = @import("Triple.zig");
+const rdf = @import("rdf.zig");
 
 const Allocator = std.mem.Allocator;
-const ArenaAllocator = std.heap.ArenaAllocator;
+const Triple = rdf.Triple;
 
 const ParseError = error{
     MissingPredicate,
@@ -35,9 +35,9 @@ pub fn parse(allocator: Allocator, input: []const u8) ![]Triple {
         }
 
         try triples.append(.{
-            .subject = try allocator.dupe(u8, subject),
-            .predicate = try allocator.dupe(u8, predicate),
-            .object = try allocator.dupe(u8, object),
+            .subject = subject,
+            .predicate = predicate,
+            .object = object,
         });
     }
 
@@ -57,10 +57,8 @@ test "parse" {
         \\<http://example.org/person#Charlie> <http://xmlns.com/foaf/0.1/age> "35"^^<http://www.w3.org/2001/XMLSchema#integer> .
     ;
 
-    var arena = ArenaAllocator.init(std.testing.allocator);
-    defer arena.deinit();
-
-    const triples = try parse(arena.allocator(), str);
+    const triples = try parse(std.testing.allocator, str);
+    defer std.testing.allocator.free(triples);
 
     try std.testing.expectEqual(7, triples.len);
 }
@@ -88,25 +86,21 @@ pub fn print(allocator: Allocator, triples: []const Triple) ![]u8 {
 }
 
 test "print" {
-    const allocator = std.testing.allocator;
-
     const triples = [_]Triple{
-        try Triple.alloc(
-            allocator,
-            "<http://example.org/person#Alice>",
-            "<http://xmlns.com/foaf/0.1/name>",
-            "\"Alice\"",
-        ),
-        try Triple.alloc(
-            allocator,
-            "<http://example.org/person#Alice>",
-            "<http://xmlns.com/foaf/0.1/age>",
-            "\"30\"^^<http://www.w3.org/2001/XMLSchema#integer>",
-        ),
+        .{
+            .subject = "<http://example.org/person#Alice>",
+            .predicate = "<http://xmlns.com/foaf/0.1/name>",
+            .object = "\"Alice\"",
+        },
+        .{
+            .subject = "<http://example.org/person#Alice>",
+            .predicate = "<http://xmlns.com/foaf/0.1/age>",
+            .object = "\"30\"^^<http://www.w3.org/2001/XMLSchema#integer>",
+        },
     };
 
-    const str = try print(allocator, &triples);
-    defer allocator.free(str);
+    const str = try print(std.testing.allocator, &triples);
+    defer std.testing.allocator.free(str);
 
     const expected =
         \\<http://example.org/person#Alice> <http://xmlns.com/foaf/0.1/name> "Alice" .
