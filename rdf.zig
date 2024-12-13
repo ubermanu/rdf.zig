@@ -6,10 +6,10 @@ pub const Triple = struct {
     object: []const u8,
 };
 
-pub const n_triples = @import("n_triples.zig");
-pub const turtle = @import("turtle.zig");
+pub const Graph = @import("Graph.zig");
 
 test {
-    _ = n_triples;
-    _ = turtle;
+    _ = @import("n_triples.zig");
+    _ = @import("turtle.zig");
+    _ = Graph;
 }
