@@ -34,7 +34,7 @@ test {
         \\    foaf:age "30"^^xsd:integer .
     ;
 
-    graph.loadFromString(ttl);
+    graph.loadFromString(.turtle, ttl);
 
     try std.testing.expectEqualStrings(
         "http://example.org/person#Alice",
