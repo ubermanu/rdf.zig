@@ -1,11 +1,10 @@
 const std = @import("std");
-const rdf = @import("rdf.zig");
 const n_triples = @import("n_triples.zig");
 const turtle = @import("turtle.zig");
+const Triple = @import("Triple.zig");
 
 const Allocator = std.mem.Allocator;
 const ArenaAllocator = std.heap.ArenaAllocator;
-const Triple = rdf.Triple;
 
 const Node = struct {
     name: []const u8,

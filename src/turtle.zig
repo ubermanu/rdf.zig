@@ -1,9 +1,8 @@
 const std = @import("std");
-const rdf = @import("rdf.zig");
+const Triple = @import("Triple.zig");
 
 const Allocator = std.mem.Allocator;
 const ArenaAllocator = std.heap.ArenaAllocator;
-const Triple = rdf.Triple;
 
 const ParseError = error{
     UnexpectedCharacter,
