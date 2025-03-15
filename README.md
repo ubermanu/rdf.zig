@@ -13,7 +13,7 @@ zig fetch --save git+https://github.com/ubermanu/rdf.zig
 
 ```zig
 const rdf_mod = b.dependency("rdf", .{});
-exe.root_module.addImport("rdf", rdf_mod.module("rdf"));
+exe.addImport("rdf", rdf_mod.module("rdf"));
 ```
 
 ## Usage

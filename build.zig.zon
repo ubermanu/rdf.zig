@@ -1,6 +1,6 @@
 .{
     .name = .rdf,
-    .version = "0.1.0",
+    .version = "0.2.0",
     .fingerprint = 0xd740fe2f21ca6f3,
     .dependencies = .{},
     .paths = .{
