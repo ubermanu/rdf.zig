@@ -4,13 +4,12 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: ['*']
+    branches: ["*"]
 
 permissions:
   contents: read
 
 jobs:
-
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -20,7 +19,7 @@ jobs:
 
       - uses: goto-bus-stop/setup-zig@v2
         with:
-          version: 0.13.0
+          version: 0.14.0
 
       - name: Check formatting
         run: zig fmt --check .
@@ -32,7 +31,7 @@ jobs:
 
     strategy:
       matrix:
-        zig-version: ['0.12.0', '0.13.0']
+        zig-version: ["0.12.0", "0.13.0", "0.14.0"]
         os: [ubuntu-latest]
         allow-fail: [false]
         include:
